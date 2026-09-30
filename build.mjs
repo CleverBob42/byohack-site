@@ -2,7 +2,28 @@
 import { writeFileSync } from 'node:fs';
 
 const SUPPORT_ENDPOINT = 'https://www.izeus.org/_functions/support';
+const APP_STORE_ID = '6800939446';
 const V = Date.now().toString(36);
+
+const appleLogo = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.1-1.2 2.9-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4z"/></svg>';
+
+// site.js switches the badge to "Download on the" with the real link once the App Store lookup finds the app.
+const storeBadge = `<a class="store" data-store="${APP_STORE_ID}" href="#get">${appleLogo}<span><small data-store-label>Coming soon on the</small><b>App Store</b></span></a>`;
+
+const icon = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+const icons = {
+  camera: icon('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'),
+  bars: icon('<path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/>'),
+  menu: icon('<path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 1-3 4-3 7h3v11"/>'),
+  heart: icon('<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M3 12h4l2-3 3 6 2-3h7"/>'),
+  chat: icon('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>'),
+  lock: icon('<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'),
+};
+
+const frame = (name, alt, lazy = true) =>
+  `<div class="frame"><img src="assets/shots/${name}.webp" alt="${alt}" width="600" height="1300"${lazy ? ' loading="lazy"' : ''}></div>`;
+const shot = (name, alt, title, sub) =>
+  `<figure class="shot">${frame(name, alt)}<figcaption>${title}<span>${sub}</span></figcaption></figure>`;
 
 function helixPath(amplitude, wavelength, height, invert = false) {
   const pts = [];
@@ -67,18 +88,83 @@ ${script ? `<script src="assets/site.js?v=${V}"></script>\n` : ''}</body>
 
 const pages = {
   'index.html': {
-    title: 'BYOHack – Meals, Health and A.I. coaching for iPhone',
-    description: 'Log meals with a photo, sync Apple Health activity and get practical wellness coaching on iPhone.',
-    body: `<main class="wrap">
-<section class="hero">
-  <img src="assets/icon-512.png" alt="BYOHack app icon" width="120" height="120">
-  <h1>BYOHack</h1>
-  <p class="lead">Log meals with a photo, sync your Apple Health activity, and get practical wellness coaching, all on your iPhone.</p>
+    title: 'BYOHack – Be your own health hacker, on iPhone',
+    description: 'Snap a meal for instant nutrient estimates, track your Apple Health trends and get practical A.I. coaching. Your data stays on your iPhone.',
+    script: true,
+    body: `<main class="wrap wide">
+<section class="pitch">
+  <div>
+    <span class="eyebrow">Nutrition &middot; Apple Health &middot; A.I. coach</span>
+    <h1>Be your own <span class="grad">health hacker</span></h1>
+    <p class="lead">Snap a photo of your meal and BYOHack estimates the energy, macros and micronutrients in seconds. It lines that up with your Apple Health trends and tells you the one thing to do next.</p>
+    <div class="cta-row">
+      ${storeBadge}
+      <a class="btn btn-ghost" href="#how">How it works</a>
+    </div>
+    <p class="meta">Free to download &middot; Your data stays on your iPhone &middot; Sign in with Apple</p>
+  </div>
+  <div class="pitch-art">
+    ${frame('today', 'The Today screen: next action, energy, protein, carbs, fat, water and exercise', false)}
+    <img class="pitch-logo" src="assets/icon-512.png" alt="BYOHack app icon" width="120" height="120">
+  </div>
 </section>
-<section class="cards">
-  <a class="card glass" href="support.html"><h2>Support</h2><p>Questions, FAQ and a contact form.</p></a>
-  <a class="card glass" href="privacy.html"><h2>Privacy</h2><p>What the app uses and where your data stays.</p></a>
-  <a class="card glass" href="terms.html"><h2>Terms of Use</h2><p>Subscriptions, A.I. features and the EULA.</p></a>
+
+<section id="features">
+  <h2 class="section-title">Everything you eat, everything you do, in one place</h2>
+  <p class="section-sub">Stop guessing. BYOHack turns meals and Health data into clear, daily nudges.</p>
+  <div class="features">
+    <div class="feature glass"><div class="icon">${icons.camera}</div><h3>Snap a meal</h3><p>Take a photo or describe what you ate. A.I. estimates energy, protein, carbs, fat and more. Save favourites to re-log with one tap.</p></div>
+    <div class="feature glass"><div class="icon">${icons.bars}</div><h3>See every nutrient</h3><p>Track vitamins, minerals, sugar, sodium, fibre and water against your own targets, with colour bars that show what's behind.</p></div>
+    <div class="feature glass"><div class="icon">${icons.menu}</div><h3>Menu ideas that fit</h3><p>Get breakfast, lunch and dinner suggestions built from your meal history and what you still need today.</p></div>
+    <div class="feature glass"><div class="icon">${icons.heart}</div><h3>Health Track</h3><p>Weight, body fat, cardio fitness, sleep, steps and mood from Apple Health, by day, week, month or year, with plain-English explanations.</p></div>
+    <div class="feature glass"><div class="icon">${icons.chat}</div><h3>Health Coach</h3><p>Ask for keto targets, a high-protein swap or a weekly adjustment. The coach knows your targets and recent days.</p></div>
+    <div class="feature glass"><div class="icon">${icons.lock}</div><h3>Private by design</h3><p>Your logs, targets and Health data stay on your iPhone. No ads, and we never sell your data.</p></div>
+  </div>
+</section>
+
+<section id="screens">
+  <h2 class="section-title">See it in action</h2>
+  <p class="section-sub">Real screens from the app.</p>
+  <div class="shots">
+    ${shot('record', 'Record food and drink: favourite meals or a new photo', 'Record in seconds', 'Photo, description or favourite')}
+    ${shot('today', 'Today overview with next action and macro bars', 'Today', 'Your next best move')}
+    ${shot('intake', 'Micronutrient intake versus targets', 'Every nutrient', 'Vitamins and minerals vs targets')}
+    ${shot('menu', 'Menu suggestions for breakfast and lunch', 'Menu ideas', 'Built from your history')}
+    ${shot('history', 'Meal history grouped by day with energy totals', 'Meal history', 'Every day at a glance')}
+    ${shot('energy', 'Energy intake chart by day with goal line', 'Energy', 'Intake against your goal')}
+    ${shot('weight', 'Weight and body fat trends from Apple Health', 'Weight trends', 'From your scale via Apple Health')}
+    ${shot('sleep', 'Sleep duration chart with goal line', 'Sleep', 'Why it matters, explained')}
+  </div>
+</section>
+
+<section id="how">
+  <h2 class="section-title">How it works</h2>
+  <p class="section-sub">Set it up in a couple of minutes, then just keep logging.</p>
+  <ol class="steps">
+    <li class="glass"><h3>Set your targets</h3><p>Pick a diet style and your energy and macro goals, or let the Health Coach suggest them.</p></li>
+    <li class="glass"><h3>Log what you eat</h3><p>Snap, describe or re-log a favourite. Estimates land in your day straight away.</p></li>
+    <li class="glass"><h3>Connect Apple Health</h3><p>Steps, active energy, weight, sleep and more flow in automatically.</p></li>
+    <li class="glass"><h3>Follow the next action</h3><p>Today tells you what's behind and what to eat next. Ask the coach when you want more.</p></li>
+  </ol>
+</section>
+
+<section id="pricing">
+  <h2 class="section-title">Free to start</h2>
+  <p class="section-sub">Upgrade only if you want more A.I. every day.</p>
+  <div class="plans">
+    <div class="plan glass"><h3>Free</h3><ul><li>Meal logging and favourites</li><li>Apple Health tracking</li><li>10 A.I. interactions to try it out</li></ul></div>
+    <div class="plan glass pro"><h3>BYOHack Pro</h3><ul><li>15 A.I. interactions every day</li><li>Meal estimates and label scan</li><li>Health Coach and menu suggestions</li><li>Monthly or annual plans</li></ul></div>
+  </div>
+</section>
+
+<section id="get">
+  <div class="band glass">
+    <img src="assets/icon-512.png" alt="" width="88" height="88">
+    <h2>Ready to hack your health?</h2>
+    <p data-store-text>BYOHack is coming soon to the App Store for iPhone.</p>
+    ${storeBadge}
+    <p class="fine">BYOHack is a wellness tool, not a medical device, and does not provide medical advice.</p>
+  </div>
 </section>
 </main>`,
   },
